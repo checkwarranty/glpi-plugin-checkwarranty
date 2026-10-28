@@ -1,0 +1,59 @@
+<root>
+   <name>CheckWarranty</name>
+   <key>checkwarranty</key>
+   <state>alpha</state>
+   <description>
+      <short>
+         <en>Automate hardware warranty tracking and factory hardware specification enrichment in GLPI using CheckWarranty B2B API.</en>
+         <fr>Automatisez le suivi des garanties matérielles et l'enrichissement des spécifications d'usine dans GLPI avec l'API CheckWarranty.</fr>
+         <ru>Автоматическая синхронизация гарантий оборудования и заводских спецификаций в GLPI через B2B API CheckWarranty.</ru>
+      </short>
+      <long>
+         <en>Alpha GLPI integration for the CheckWarranty B2B API. Intended features include a Computer warranty tab, manual refresh and background synchronization. Runtime acceptance and API/authorization fixes are pending. Do not use in production. A CheckWarranty API key is required; live lookups may consume paid credits. Read RELEASE.md before testing.</en>
+         <fr>Intégration GLPI alpha pour l’API B2B CheckWarranty. Fonctionnalités prévues : onglet garantie, actualisation manuelle et synchronisation automatique. Validation en environnement GLPI et corrections API/droits en attente. Ne pas utiliser en production. Une clé API est requise ; les requêtes réelles peuvent consommer des crédits payants. Consulter RELEASE.md avant les tests.</fr>
+         <ru>Альфа-версия интеграции GLPI с B2B API CheckWarranty. Планируются вкладка гарантии, ручное обновление и фоновая синхронизация. Проверка в GLPI и исправления API и прав доступа ещё не завершены. Не использовать в production. Нужен API-ключ; реальные запросы могут расходовать платные кредиты. Перед тестированием прочитайте RELEASE.md.</ru>
+      </long>
+   </description>
+   <homepage>https://checkwarranty.info</homepage>
+   <download>https://github.com/checkwarranty/glpi-plugin-checkwarranty/releases</download>
+   <issues>https://github.com/checkwarranty/glpi-plugin-checkwarranty/issues</issues>
+   <readme>https://raw.githubusercontent.com/checkwarranty/glpi-plugin-checkwarranty/main/README.md</readme>
+   <changelog>https://raw.githubusercontent.com/checkwarranty/glpi-plugin-checkwarranty/main/CHANGELOG.md</changelog>
+   <authors>
+      <author>CheckWarranty Team</author>
+   </authors>
+   <versions>
+      <version>
+         <num>1.0.0</num>
+         <compatibility>&gt;=10.0.0 &lt;12.0.0</compatibility>
+         <download_url>https://github.com/checkwarranty/glpi-plugin-checkwarranty/releases/download/v1.0.0/glpi-checkwarranty-1.0.0.tar.gz</download_url>
+      </version>
+   </versions>
+   <langs>
+      <lang>en_GB</lang>
+      <lang>fr_FR</lang>
+      <lang>ru_RU</lang>
+   </langs>
+   <license>GPLv3+</license>
+   <tags>
+      <en>
+         <tag>warranty</tag>
+         <tag>hardware</tag>
+         <tag>inventory</tag>
+         <tag>specifications</tag>
+         <tag>asset management</tag>
+      </en>
+      <fr>
+         <tag>garantie</tag>
+         <tag>matériel</tag>
+         <tag>inventaire</tag>
+         <tag>spécifications</tag>
+      </fr>
+      <ru>
+         <tag>гарантия</tag>
+         <tag>оборудование</tag>
+         <tag>инвентаризация</tag>
+         <tag>комплектация</tag>
+      </ru>
+   </tags>
+</root>

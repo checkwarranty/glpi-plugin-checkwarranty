@@ -1,0 +1,27 @@
+{
+    "name": "checkwarranty/glpi-plugin-checkwarranty",
+    "description": "GLPI plugin for hardware warranty lookup via the CheckWarranty B2B API (under development)",
+    "type": "glpi-plugin",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "CheckWarranty Team",
+            "email": "support@checkwarranty.info",
+            "homepage": "https://checkwarranty.info"
+        }
+    ],
+    "homepage": "https://checkwarranty.info",
+    "support": {
+        "issues": "https://github.com/checkwarranty/glpi-plugin-checkwarranty/issues",
+        "source": "https://github.com/checkwarranty/glpi-plugin-checkwarranty"
+    },
+    "require": {
+        "php": ">=8.0.0",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "scripts": {
+        "lint": "bash tools/lint.sh",
+        "test": "python3 -m unittest discover -s tests -v"
+    }
+}

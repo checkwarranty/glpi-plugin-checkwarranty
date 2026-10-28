@@ -1,0 +1,66 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CheckWarranty GLPI Plugin 1.0.0\n"
+"Report-Msgid-Bugs-To: support@checkwarranty.info\n"
+"POT-Creation-Date: 2026-10-28 22:30+0000\n"
+"PO-Revision-Date: 2026-10-28 22:30+0000\n"
+"Last-Translator: CheckWarranty Team <support@checkwarranty.info>\n"
+"Language-Team: French\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "CheckWarranty"
+msgstr "CheckWarranty"
+
+msgid "Warranty (CheckWarranty)"
+msgstr "Garantie (CheckWarranty)"
+
+msgid "Hardware Warranty Status"
+msgstr "État de la garantie matérielle"
+
+msgid "Serial Number"
+msgstr "Numéro de série"
+
+msgid "No serial number defined"
+msgstr "Aucun numéro de série défini"
+
+msgid "Warranty Expiration Date"
+msgstr "Date d'expiration de la garantie"
+
+msgid "Purchase / Factory Ship Date"
+msgstr "Date d'achat / d'expédition d'usine"
+
+msgid "Warranty Duration"
+msgstr "Durée de la garantie"
+
+msgid "Support Tier & Factory Specs"
+msgstr "Niveau de support et spécifications d'usine"
+
+msgid "Expired"
+msgstr "Expirée"
+
+msgid "Active"
+msgstr "Active"
+
+msgid "Not recorded"
+msgstr "Non enregistré"
+
+msgid "Check / Refresh Warranty with CheckWarranty"
+msgstr "Vérifier / Mettre à jour la garantie avec CheckWarranty"
+
+msgid "CheckWarranty Settings"
+msgstr "Paramètres CheckWarranty"
+
+msgid "CheckWarranty API Key"
+msgstr "Clé API CheckWarranty"
+
+msgid "Smart Recheck Days"
+msgstr "Jours avant revérification intelligente"
+
+msgid "Sync Factory Specifications"
+msgstr "Synchroniser les spécifications d'usine"
+
+msgid "Auto-Detect Brand"
+msgstr "Détection automatique de la marque"

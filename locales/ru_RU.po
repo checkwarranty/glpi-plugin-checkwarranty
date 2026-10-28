@@ -1,0 +1,66 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CheckWarranty GLPI Plugin 1.0.0\n"
+"Report-Msgid-Bugs-To: support@checkwarranty.info\n"
+"POT-Creation-Date: 2026-10-28 22:30+0000\n"
+"PO-Revision-Date: 2026-10-28 22:30+0000\n"
+"Last-Translator: CheckWarranty Team <support@checkwarranty.info>\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "CheckWarranty"
+msgstr "CheckWarranty"
+
+msgid "Warranty (CheckWarranty)"
+msgstr "Гарантия (CheckWarranty)"
+
+msgid "Hardware Warranty Status"
+msgstr "Статус гарантии оборудования"
+
+msgid "Serial Number"
+msgstr "Серийный номер"
+
+msgid "No serial number defined"
+msgstr "Серийный номер не указан"
+
+msgid "Warranty Expiration Date"
+msgstr "Дата окончания гарантии"
+
+msgid "Purchase / Factory Ship Date"
+msgstr "Дата покупки / отгрузки с завода"
+
+msgid "Warranty Duration"
+msgstr "Срок гарантии"
+
+msgid "Support Tier & Factory Specs"
+msgstr "Уровень поддержки и спецификации"
+
+msgid "Expired"
+msgstr "Истекла"
+
+msgid "Active"
+msgstr "Активна"
+
+msgid "Not recorded"
+msgstr "Не указано"
+
+msgid "Check / Refresh Warranty with CheckWarranty"
+msgstr "Проверить / обновить гарантию через CheckWarranty"
+
+msgid "CheckWarranty Settings"
+msgstr "Настройки CheckWarranty"
+
+msgid "CheckWarranty API Key"
+msgstr "API-ключ CheckWarranty"
+
+msgid "Smart Recheck Days"
+msgstr "Дней до умной повторной проверки"
+
+msgid "Sync Factory Specifications"
+msgstr "Синхронизировать заводские спецификации"
+
+msgid "Auto-Detect Brand"
+msgstr "Автоопределение бренда"

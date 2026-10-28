@@ -1,0 +1,10 @@
+vendor/
+dist/
+composer.lock
+.DS_Store
+*.swp
+*.bak
+*.tmp
+__pycache__/
+.env
+.env.*
