@@ -31,7 +31,7 @@ foreach ($DB->request(['FROM' => 'glpi_plugin_checkwarranty_configs', 'WHERE' =>
 verify(PluginCheckwarrantyConfig::getConfig()['api_key'] === 'acceptance-sandbox-only', 'Encrypted key decrypts');
 
 $ids = [];
-foreach (['ENDONLY', 'FULL', 'SPECS', 'NOTFOUND', 'ASYNC', 'ERROR'] as $kind) {
+foreach (['ENDONLY', 'FULL', 'SPECS', 'NOTFOUND', 'ASYNC', 'ASYNCFAIL', 'PARTIALREFRESH', 'ERROR'] as $kind) {
     $computer = new Computer();
     $id = $computer->add(['name' => 'Acceptance ' . $kind, 'serial' => 'TEST-' . $kind, 'entities_id' => 0]);
     verify($id > 0, 'Create test Computer ' . $kind);
@@ -39,7 +39,7 @@ foreach (['ENDONLY', 'FULL', 'SPECS', 'NOTFOUND', 'ASYNC', 'ERROR'] as $kind) {
     $infocom = new Infocom();
     $infocom->add(['itemtype' => 'Computer', 'items_id' => $id, 'buy_date' => '2020-03-01', 'warranty_info' => 'Manual note']);
     $status = PluginCheckwarrantySync::run($computer, true);
-    $expected = ['NOTFOUND' => 'not_found', 'ASYNC' => 'pending', 'ERROR' => 'error'][$kind] ?? 'completed';
+    $expected = ['NOTFOUND' => 'not_found', 'ASYNC' => 'pending', 'ASYNCFAIL' => 'pending', 'ERROR' => 'error'][$kind] ?? 'completed';
     verify($status === $expected, $kind . ' returns ' . $expected);
     $infocom->getFromDBforDevice('Computer', $id);
     verify($infocom->fields['buy_date'] === '2020-03-01', $kind . ' preserves purchase');
@@ -59,6 +59,23 @@ foreach (['ENDONLY', 'FULL', 'SPECS', 'NOTFOUND', 'ASYNC', 'ERROR'] as $kind) {
     if ($kind === 'ASYNC') {
         $DB->update(PluginCheckwarrantySync::TABLE, ['date_attempt' => date('Y-m-d H:i:s', time() - 120)], ['computers_id' => $id]);
         verify(PluginCheckwarrantySync::run($computer, true) === 'completed', 'Pending scan resumes with GET');
+    }
+    if ($kind === 'ASYNCFAIL') {
+        $originalKey = PluginCheckwarrantySync::get($id)['request_key'];
+        $DB->update(PluginCheckwarrantySync::TABLE, ['date_attempt' => date('Y-m-d H:i:s', time() - 120)], ['computers_id' => $id]);
+        verify(PluginCheckwarrantySync::run($computer, true) === 'error', 'Terminal failed batch detected');
+        verify(PluginCheckwarrantySync::get($id)['batch_id'] === '', 'Terminal batch no longer polled');
+        $DB->update(PluginCheckwarrantySync::TABLE, ['date_attempt' => date('Y-m-d H:i:s', time() - 360)], ['computers_id' => $id]);
+        verify(PluginCheckwarrantySync::run($computer, true) === 'pending', 'New job allowed after terminal failure cooldown');
+        verify(PluginCheckwarrantySync::get($id)['request_key'] !== $originalKey, 'Terminal retry has a new logical request key');
+    }
+    if ($kind === 'PARTIALREFRESH') {
+        $DB->update(PluginCheckwarrantySync::TABLE, ['date_checked' => date('Y-m-d H:i:s', time() - 2 * DAY_TIMESTAMP), 'date_attempt' => date('Y-m-d H:i:s', time() - 120)], ['computers_id' => $id]);
+        verify(PluginCheckwarrantySync::run($computer, true) === 'completed', 'Partial refresh accepted');
+        $stored = json_decode(PluginCheckwarrantySync::get($id)['payload'], true);
+        verify($stored['warranty']['endDate'] === '2027-01-05', 'Partial refresh retains previous exact expiry');
+        $infocom->getFromDBforDevice('Computer', $id);
+        verify(str_contains($infocom->fields['warranty_info'], 'expiry=2027-01-05'), 'Partial refresh does not erase warranty notes');
     }
     if ($kind === 'ERROR') {
         $before = PluginCheckwarrantySync::get($id)['request_key'];

@@ -32,7 +32,11 @@ class Handler(BaseHTTPRequestHandler):
         data = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))))
         serial = data.get("serialNumber", "")
         REQUESTS.append({"serial": serial, "key": self.headers.get("Idempotency-Key")})
-        if "ERROR" in serial:
+        if "PARTIALREFRESH" in serial and sum(row["serial"] == serial for row in REQUESTS) > 1:
+            self.send({"status":"completed","warranty":{"status":"unknown","details":{"processor":"Updated Xeon"}}})
+        elif "ASYNCFAIL" in serial:
+            self.send({"status":"in_progress","batchId":"00000000-0000-4000-8000-000000000002"},202)
+        elif "ERROR" in serial:
             self.send({"status": "error"}, 503)
         elif "ASYNC" in serial:
             self.send({"status": "in_progress", "batchId": "00000000-0000-4000-8000-000000000001"}, 202)
@@ -42,6 +46,8 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/_stats":
             self.send(REQUESTS)
+        elif self.path.endswith("00000000-0000-4000-8000-000000000002"):
+            self.send({"status":"failed","items":[{"status":"failed"}]})
         elif "/devices/scans/" in self.path:
             self.send({"status": "completed", "items": [fixture("TEST-ASYNC")]})
         else:

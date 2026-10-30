@@ -83,6 +83,21 @@ class PluginCheckwarrantyResult
         }
         if ($parts) {
             $manual = rtrim(preg_replace('/(?:\n)?\[CheckWarranty\][^\n]*/', '', $existing['warranty_info'] ?? ''));
+            preg_match('/\[CheckWarranty\] ([^\n]*)/', $existing['warranty_info'] ?? '', $previous);
+            $merged = [];
+            foreach (array_merge(isset($previous[1]) ? explode('; ', $previous[1]) : [], $parts) as $part) {
+                $pair = explode('=', $part, 2);
+                if (count($pair) === 2 && $pair[1] !== '') {
+                    $merged[$pair[0]] = $pair[1];
+                }
+            }
+            if (isset($merged['expiry'])) {
+                $merged = ['expiry' => $merged['expiry']] + $merged;
+            }
+            $parts = [];
+            foreach ($merged as $key => $value) {
+                $parts[] = $key . '=' . $value;
+            }
             $note = '[CheckWarranty] ' . str_replace(["\r", "\n"], ' ', implode('; ', $parts));
             $available = 255 - mb_strlen($manual) - ($manual !== '' ? 1 : 0);
             if ($available >= mb_strlen('[CheckWarranty] ' . $parts[0])) {
@@ -90,5 +105,25 @@ class PluginCheckwarrantyResult
             }
         }
         return $payload;
+    }
+
+    public static function merge(array $current, array $previous): array
+    {
+        if (($current['warranty']['startDateSource'] ?? '') === 'estimated'
+            && !empty($previous['warranty']['startDate'])
+            && ($previous['warranty']['startDateSource'] ?? '') !== 'estimated') {
+            $current['warranty']['startDate'] = $previous['warranty']['startDate'];
+            unset($current['warranty']['startDateSource']);
+        }
+        foreach (['startDate', 'endDate', 'coverageType'] as $key) {
+            if (empty($current['warranty'][$key]) && !empty($previous['warranty'][$key])) {
+                $current['warranty'][$key] = $previous['warranty'][$key];
+                if ($key === 'startDate' && isset($previous['warranty']['startDateSource'])) {
+                    $current['warranty']['startDateSource'] = $previous['warranty']['startDateSource'];
+                }
+            }
+        }
+        $current['specs'] = $current['specs'] + ($previous['specs'] ?? []);
+        return $current;
     }
 }

@@ -21,7 +21,7 @@ $messages = [
     'cached' => __('Recent result reused; no new scan requested.', 'checkwarranty'),
     'pending' => __('Scan pending. Refresh later; no duplicate scan is created.', 'checkwarranty'),
     'not_found' => __('No useful device data returned.', 'checkwarranty'),
-    'error' => __('Lookup or storage failed. Retry uses the same request.', 'checkwarranty'),
+    'error' => __('Lookup failed. Retry later; completed data is preserved.', 'checkwarranty'),
     'skipped' => __('Serial, manufacturer or API key is missing.', 'checkwarranty'),
 ];
 Session::addMessageAfterRedirect($messages[$status], true, in_array($status, ['error', 'not_found', 'skipped'], true) ? WARNING : INFO);

@@ -44,7 +44,8 @@ class PluginCheckwarrantySync
         if ($last && !$retry && $now - $last < $cacheSeconds) {
             return 'cached';
         }
-        if ($sameSerial && $now - (strtotime($state['date_attempt'] ?? '') ?: 0) < 60) {
+        $cooldown = ($state['state'] ?? '') === 'failed' ? 300 : 60;
+        if ($sameSerial && $now - (strtotime($state['date_attempt'] ?? '') ?: 0) < $cooldown) {
             return 'pending';
         }
         $requestKey = $retry ? $state['request_key'] : bin2hex(random_bytes(16));
@@ -81,14 +82,22 @@ class PluginCheckwarrantySync
             self::save($id, ['state' => 'pending', 'batch_id' => $response['batchId'] ?? $values['batch_id']]);
             return 'pending';
         }
-        if (in_array($response['status'] ?? '', ['error', 'failed'], true)) {
+        if (($response['status'] ?? '') === 'failed') {
+            // Confirmed terminal failures may start a new job after a cooldown.
+            self::save($id, ['state' => 'failed', 'batch_id' => '', 'request_key' => '', 'date_checked' => null]);
+            return 'error';
+        }
+        if (($response['status'] ?? '') === 'error') {
             self::save($id, ['state' => 'error']);
             return 'error';
         }
         $result = $storageRetry ? $stored : PluginCheckwarrantyResult::normalize($response);
         if (!$result) {
-            self::save($id, ['state' => 'not_found', 'date_checked' => date('Y-m-d H:i:s'), 'payload' => null, 'batch_id' => '']);
+            self::save($id, ['state' => 'not_found', 'date_checked' => date('Y-m-d H:i:s'), 'batch_id' => '']);
             return 'not_found';
+        }
+        if (is_array($stored) && !$storageRetry) {
+            $result = PluginCheckwarrantyResult::merge($result, $stored);
         }
         $infocom = new Infocom();
         $exists = $infocom->getFromDBforDevice('Computer', $id);

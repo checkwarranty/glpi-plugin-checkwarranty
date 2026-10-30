@@ -1,66 +1,125 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: CheckWarranty GLPI Plugin 1.0.0\n"
-"Report-Msgid-Bugs-To: support@checkwarranty.info\n"
-"POT-Creation-Date: 2026-10-28 22:30+0000\n"
-"PO-Revision-Date: 2026-10-28 22:30+0000\n"
-"Last-Translator: CheckWarranty Team <support@checkwarranty.info>\n"
-"Language-Team: French\n"
-"Language: fr_FR\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: CheckWarranty 1.0.1\nReport-Msgid-Bugs-To: support@checkwarranty.info\nLanguage: fr_FR\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPO-Revision-Date: 2026-10-30 00:00+0000\nLast-Translator: CheckWarranty Team <support@checkwarranty.info>\nLanguage-Team: CheckWarranty\n"
+
+msgid "API URL"
+msgstr "URL de l’API"
+
+msgid "API key required."
+msgstr "Clé API requise."
+
+msgid "Auto-Detect Brand"
+msgstr "Détecter automatiquement la marque"
+
+msgid "Check / Refresh Warranty with CheckWarranty"
+msgstr "Vérifier / actualiser la garantie avec CheckWarranty"
 
 msgid "CheckWarranty"
 msgstr "CheckWarranty"
 
-msgid "Warranty (CheckWarranty)"
-msgstr "Garantie (CheckWarranty)"
-
-msgid "Hardware Warranty Status"
-msgstr "État de la garantie matérielle"
-
-msgid "Serial Number"
-msgstr "Numéro de série"
-
-msgid "No serial number defined"
-msgstr "Aucun numéro de série défini"
-
-msgid "Warranty Expiration Date"
-msgstr "Date d'expiration de la garantie"
-
-msgid "Purchase / Factory Ship Date"
-msgstr "Date d'achat / d'expédition d'usine"
-
-msgid "Warranty Duration"
-msgstr "Durée de la garantie"
-
-msgid "Support Tier & Factory Specs"
-msgstr "Niveau de support et spécifications d'usine"
-
-msgid "Expired"
-msgstr "Expirée"
-
-msgid "Active"
-msgstr "Active"
-
-msgid "Not recorded"
-msgstr "Non enregistré"
-
-msgid "Check / Refresh Warranty with CheckWarranty"
-msgstr "Vérifier / Mettre à jour la garantie avec CheckWarranty"
+msgid "CheckWarranty API Key"
+msgstr "Clé API CheckWarranty"
 
 msgid "CheckWarranty Settings"
 msgstr "Paramètres CheckWarranty"
 
-msgid "CheckWarranty API Key"
-msgstr "Clé API CheckWarranty"
+msgid "CheckWarranty automatic synchronization"
+msgstr "Synchronisation automatique CheckWarranty"
+
+msgid "CheckWarranty settings saved successfully."
+msgstr "Paramètres CheckWarranty enregistrés."
+
+msgid "Completed"
+msgstr "Terminé"
+
+msgid "Failed to save CheckWarranty settings."
+msgstr "Échec de l’enregistrement des paramètres CheckWarranty."
+
+msgid "Hardware Warranty Status"
+msgstr "État de la garantie matérielle"
+
+msgid "JSON extension is required for CheckWarranty"
+msgstr "L’extension JSON est requise pour CheckWarranty"
+
+msgid "Key configured; leave blank to keep it."
+msgstr "Clé configurée ; laisser vide pour la conserver."
+
+msgid "Live lookups may consume API credits. Use a sandbox key for testing."
+msgstr "Les requêtes réelles peuvent consommer des crédits API. Utilisez une clé sandbox pour les tests."
+
+msgid "Lookup failed"
+msgstr "Échec de la recherche"
+
+msgid "Lookup failed. Retry later; completed data is preserved."
+msgstr "Échec de la recherche. Réessayez plus tard ; les données obtenues sont conservées."
+
+msgid "No data"
+msgstr "Aucune donnée"
+
+msgid "No useful device data recorded yet."
+msgstr "Aucune donnée utile sur cet appareil n’est encore enregistrée."
+
+msgid "No useful device data returned."
+msgstr "Aucune donnée utile sur l’appareil n’a été renvoyée."
+
+msgid "Not recorded"
+msgstr "Non renseigné"
+
+#, php-format
+msgid "PHP >= %s required"
+msgstr "PHP >= %s requis"
+
+msgid "Pending"
+msgstr "En attente"
+
+msgid "Recent result reused; no new scan requested."
+msgstr "Résultat récent réutilisé ; aucune nouvelle analyse demandée."
+
+msgid "Remove API key"
+msgstr "Supprimer la clé API"
+
+msgid "Scan pending. Refresh later; no duplicate scan is created."
+msgstr "Analyse en cours. Actualisez plus tard ; aucune analyse en double ne sera créée."
+
+msgid "Scan status"
+msgstr "État de l’analyse"
+
+msgid "Serial Number"
+msgstr "Numéro de série"
+
+msgid "Serial, manufacturer or API key is missing."
+msgstr "Numéro de série, constructeur ou clé API manquant."
+
+msgid "Skipped"
+msgstr "Ignoré"
 
 msgid "Smart Recheck Days"
-msgstr "Jours avant revérification intelligente"
+msgstr "Délai de nouvelle vérification (jours)"
+
+msgid "Storage retry pending"
+msgstr "Nouvelle tentative d’enregistrement en attente"
+
+msgid "Support Tier & Factory Specs"
+msgstr "Niveau de support et caractéristiques d’usine"
 
 msgid "Sync Factory Specifications"
-msgstr "Synchroniser les spécifications d'usine"
+msgstr "Synchroniser les caractéristiques d’usine"
 
-msgid "Auto-Detect Brand"
-msgstr "Détection automatique de la marque"
+msgid "Transport error"
+msgstr "Erreur de connexion"
+
+msgid "Warranty (CheckWarranty)"
+msgstr "Garantie (CheckWarranty)"
+
+msgid "Warranty Expiration Date"
+msgstr "Date de fin de garantie"
+
+msgid "Warranty refreshed."
+msgstr "Garantie actualisée."
+
+msgid "Warranty start date"
+msgstr "Date de début de garantie"
+
+msgid "cURL extension is required for CheckWarranty"
+msgstr "L’extension cURL est requise pour CheckWarranty"
+

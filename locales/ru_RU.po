@@ -1,66 +1,125 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: CheckWarranty GLPI Plugin 1.0.0\n"
-"Report-Msgid-Bugs-To: support@checkwarranty.info\n"
-"POT-Creation-Date: 2026-10-28 22:30+0000\n"
-"PO-Revision-Date: 2026-10-28 22:30+0000\n"
-"Last-Translator: CheckWarranty Team <support@checkwarranty.info>\n"
-"Language-Team: Russian\n"
-"Language: ru_RU\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: CheckWarranty 1.0.1\nReport-Msgid-Bugs-To: support@checkwarranty.info\nLanguage: ru_RU\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPO-Revision-Date: 2026-10-30 00:00+0000\nLast-Translator: CheckWarranty Team <support@checkwarranty.info>\nLanguage-Team: CheckWarranty\n"
 
-msgid "CheckWarranty"
-msgstr "CheckWarranty"
+msgid "API URL"
+msgstr "Адрес API"
 
-msgid "Warranty (CheckWarranty)"
-msgstr "Гарантия (CheckWarranty)"
+msgid "API key required."
+msgstr "Нужен API-ключ."
 
-msgid "Hardware Warranty Status"
-msgstr "Статус гарантии оборудования"
-
-msgid "Serial Number"
-msgstr "Серийный номер"
-
-msgid "No serial number defined"
-msgstr "Серийный номер не указан"
-
-msgid "Warranty Expiration Date"
-msgstr "Дата окончания гарантии"
-
-msgid "Purchase / Factory Ship Date"
-msgstr "Дата покупки / отгрузки с завода"
-
-msgid "Warranty Duration"
-msgstr "Срок гарантии"
-
-msgid "Support Tier & Factory Specs"
-msgstr "Уровень поддержки и спецификации"
-
-msgid "Expired"
-msgstr "Истекла"
-
-msgid "Active"
-msgstr "Активна"
-
-msgid "Not recorded"
-msgstr "Не указано"
+msgid "Auto-Detect Brand"
+msgstr "Автоматически определять бренд"
 
 msgid "Check / Refresh Warranty with CheckWarranty"
 msgstr "Проверить / обновить гарантию через CheckWarranty"
 
-msgid "CheckWarranty Settings"
-msgstr "Настройки CheckWarranty"
+msgid "CheckWarranty"
+msgstr "CheckWarranty"
 
 msgid "CheckWarranty API Key"
 msgstr "API-ключ CheckWarranty"
 
+msgid "CheckWarranty Settings"
+msgstr "Настройки CheckWarranty"
+
+msgid "CheckWarranty automatic synchronization"
+msgstr "Автоматическая синхронизация CheckWarranty"
+
+msgid "CheckWarranty settings saved successfully."
+msgstr "Настройки CheckWarranty сохранены."
+
+msgid "Completed"
+msgstr "Завершено"
+
+msgid "Failed to save CheckWarranty settings."
+msgstr "Не удалось сохранить настройки CheckWarranty."
+
+msgid "Hardware Warranty Status"
+msgstr "Состояние гарантии оборудования"
+
+msgid "JSON extension is required for CheckWarranty"
+msgstr "Для CheckWarranty нужно расширение JSON"
+
+msgid "Key configured; leave blank to keep it."
+msgstr "Ключ настроен; оставьте поле пустым, чтобы сохранить его."
+
+msgid "Live lookups may consume API credits. Use a sandbox key for testing."
+msgstr "Рабочие запросы могут расходовать API-кредиты. Для тестов используйте ключ sandbox."
+
+msgid "Lookup failed"
+msgstr "Ошибка проверки"
+
+msgid "Lookup failed. Retry later; completed data is preserved."
+msgstr "Ошибка проверки. Повторите позже; полученные данные сохранены."
+
+msgid "No data"
+msgstr "Нет данных"
+
+msgid "No useful device data recorded yet."
+msgstr "Полезных данных об устройстве пока нет."
+
+msgid "No useful device data returned."
+msgstr "Полезные данные об устройстве не получены."
+
+msgid "Not recorded"
+msgstr "Нет данных"
+
+#, php-format
+msgid "PHP >= %s required"
+msgstr "Требуется PHP >= %s"
+
+msgid "Pending"
+msgstr "Выполняется"
+
+msgid "Recent result reused; no new scan requested."
+msgstr "Использован недавний результат без нового сканирования."
+
+msgid "Remove API key"
+msgstr "Удалить API-ключ"
+
+msgid "Scan pending. Refresh later; no duplicate scan is created."
+msgstr "Проверка выполняется. Обновите позже; повторная проверка не создаётся."
+
+msgid "Scan status"
+msgstr "Состояние проверки"
+
+msgid "Serial Number"
+msgstr "Серийный номер"
+
+msgid "Serial, manufacturer or API key is missing."
+msgstr "Не указан серийный номер, производитель или API-ключ."
+
+msgid "Skipped"
+msgstr "Пропущено"
+
 msgid "Smart Recheck Days"
-msgstr "Дней до умной повторной проверки"
+msgstr "Интервал проверки, дней"
+
+msgid "Storage retry pending"
+msgstr "Ожидается повторная запись"
+
+msgid "Support Tier & Factory Specs"
+msgstr "Уровень поддержки и заводские характеристики"
 
 msgid "Sync Factory Specifications"
-msgstr "Синхронизировать заводские спецификации"
+msgstr "Синхронизировать заводские характеристики"
 
-msgid "Auto-Detect Brand"
-msgstr "Автоопределение бренда"
+msgid "Transport error"
+msgstr "Ошибка соединения"
+
+msgid "Warranty (CheckWarranty)"
+msgstr "Гарантия (CheckWarranty)"
+
+msgid "Warranty Expiration Date"
+msgstr "Дата окончания гарантии"
+
+msgid "Warranty refreshed."
+msgstr "Гарантия обновлена."
+
+msgid "Warranty start date"
+msgstr "Дата начала гарантии"
+
+msgid "cURL extension is required for CheckWarranty"
+msgstr "Для CheckWarranty нужно расширение cURL"
+

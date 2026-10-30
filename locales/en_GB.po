@@ -1,66 +1,125 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: CheckWarranty GLPI Plugin 1.0.0\n"
-"Report-Msgid-Bugs-To: support@checkwarranty.info\n"
-"POT-Creation-Date: 2026-10-28 22:30+0000\n"
-"PO-Revision-Date: 2026-10-28 22:30+0000\n"
-"Last-Translator: CheckWarranty Team <support@checkwarranty.info>\n"
-"Language-Team: English\n"
-"Language: en_GB\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: CheckWarranty 1.0.1\nReport-Msgid-Bugs-To: support@checkwarranty.info\nLanguage: en_GB\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPO-Revision-Date: 2026-10-30 00:00+0000\nLast-Translator: CheckWarranty Team <support@checkwarranty.info>\nLanguage-Team: CheckWarranty\n"
 
-msgid "CheckWarranty"
-msgstr "CheckWarranty"
+msgid "API URL"
+msgstr "API URL"
 
-msgid "Warranty (CheckWarranty)"
-msgstr "Warranty (CheckWarranty)"
+msgid "API key required."
+msgstr "API key required."
 
-msgid "Hardware Warranty Status"
-msgstr "Hardware Warranty Status"
-
-msgid "Serial Number"
-msgstr "Serial Number"
-
-msgid "No serial number defined"
-msgstr "No serial number defined"
-
-msgid "Warranty Expiration Date"
-msgstr "Warranty Expiration Date"
-
-msgid "Purchase / Factory Ship Date"
-msgstr "Purchase / Factory Ship Date"
-
-msgid "Warranty Duration"
-msgstr "Warranty Duration"
-
-msgid "Support Tier & Factory Specs"
-msgstr "Support Tier & Factory Specs"
-
-msgid "Expired"
-msgstr "Expired"
-
-msgid "Active"
-msgstr "Active"
-
-msgid "Not recorded"
-msgstr "Not recorded"
+msgid "Auto-Detect Brand"
+msgstr "Auto-Detect Brand"
 
 msgid "Check / Refresh Warranty with CheckWarranty"
 msgstr "Check / Refresh Warranty with CheckWarranty"
 
-msgid "CheckWarranty Settings"
-msgstr "CheckWarranty Settings"
+msgid "CheckWarranty"
+msgstr "CheckWarranty"
 
 msgid "CheckWarranty API Key"
 msgstr "CheckWarranty API Key"
 
+msgid "CheckWarranty Settings"
+msgstr "CheckWarranty Settings"
+
+msgid "CheckWarranty automatic synchronization"
+msgstr "CheckWarranty automatic synchronization"
+
+msgid "CheckWarranty settings saved successfully."
+msgstr "CheckWarranty settings saved successfully."
+
+msgid "Completed"
+msgstr "Completed"
+
+msgid "Failed to save CheckWarranty settings."
+msgstr "Failed to save CheckWarranty settings."
+
+msgid "Hardware Warranty Status"
+msgstr "Hardware Warranty Status"
+
+msgid "JSON extension is required for CheckWarranty"
+msgstr "JSON extension is required for CheckWarranty"
+
+msgid "Key configured; leave blank to keep it."
+msgstr "Key configured; leave blank to keep it."
+
+msgid "Live lookups may consume API credits. Use a sandbox key for testing."
+msgstr "Live lookups may consume API credits. Use a sandbox key for testing."
+
+msgid "Lookup failed"
+msgstr "Lookup failed"
+
+msgid "Lookup failed. Retry later; completed data is preserved."
+msgstr "Lookup failed. Retry later; completed data is preserved."
+
+msgid "No data"
+msgstr "No data"
+
+msgid "No useful device data recorded yet."
+msgstr "No useful device data recorded yet."
+
+msgid "No useful device data returned."
+msgstr "No useful device data returned."
+
+msgid "Not recorded"
+msgstr "Not recorded"
+
+#, php-format
+msgid "PHP >= %s required"
+msgstr "PHP >= %s required"
+
+msgid "Pending"
+msgstr "Pending"
+
+msgid "Recent result reused; no new scan requested."
+msgstr "Recent result reused; no new scan requested."
+
+msgid "Remove API key"
+msgstr "Remove API key"
+
+msgid "Scan pending. Refresh later; no duplicate scan is created."
+msgstr "Scan pending. Refresh later; no duplicate scan is created."
+
+msgid "Scan status"
+msgstr "Scan status"
+
+msgid "Serial Number"
+msgstr "Serial Number"
+
+msgid "Serial, manufacturer or API key is missing."
+msgstr "Serial, manufacturer or API key is missing."
+
+msgid "Skipped"
+msgstr "Skipped"
+
 msgid "Smart Recheck Days"
 msgstr "Smart Recheck Days"
+
+msgid "Storage retry pending"
+msgstr "Storage retry pending"
+
+msgid "Support Tier & Factory Specs"
+msgstr "Support Tier & Factory Specs"
 
 msgid "Sync Factory Specifications"
 msgstr "Sync Factory Specifications"
 
-msgid "Auto-Detect Brand"
-msgstr "Auto-Detect Brand"
+msgid "Transport error"
+msgstr "Transport error"
+
+msgid "Warranty (CheckWarranty)"
+msgstr "Warranty (CheckWarranty)"
+
+msgid "Warranty Expiration Date"
+msgstr "Warranty Expiration Date"
+
+msgid "Warranty refreshed."
+msgstr "Warranty refreshed."
+
+msgid "Warranty start date"
+msgstr "Warranty start date"
+
+msgid "cURL extension is required for CheckWarranty"
+msgstr "cURL extension is required for CheckWarranty"
+
