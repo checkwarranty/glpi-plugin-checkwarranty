@@ -34,6 +34,15 @@ class PluginCheckwarrantyResult
                 $specs[$target] = trim($value);
             }
         }
+        $device = $response['device'] ?? [];
+        if (is_array($device) && ($warranty['status'] ?? '') !== 'not_found') {
+            foreach (['model' => 'model', 'productNumber' => 'product_number', 'description' => 'description'] as $source => $target) {
+                $value = $device[$source] ?? '';
+                if (is_string($value) && trim($value) !== '' && !preg_match('/^(unknown( device)?|[a-z]+ device|n\/a|none|-)$/i', trim($value))) {
+                    $specs[$target] = trim($value);
+                }
+            }
+        }
         $warranty['startDate'] = self::date($warranty['startDate'] ?? null);
         $warranty['endDate'] = self::date($warranty['endDate'] ?? null);
         $tier = $warranty['coverageType'] ?? '';

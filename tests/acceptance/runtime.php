@@ -1,7 +1,13 @@
 <?php
 /** Run only in the isolated acceptance compose project. */
 define('PLUGIN_CHECKWARRANTY_TESTING', true);
-require '/var/www/glpi/inc/includes.php';
+if (is_file('/var/www/glpi/src/Glpi/Kernel/Kernel.php')) {
+    require '/var/www/glpi/vendor/autoload.php';
+    $kernel = new \Glpi\Kernel\Kernel();
+    $kernel->boot();
+} else {
+    require '/var/www/glpi/inc/includes.php';
+}
 
 function verify($condition, string $message): void
 {

@@ -70,8 +70,8 @@ class PluginCheckwarrantySync
         $model = new ComputerModel();
         $mfg = $manufacturer->getFromDB((int) ($computer->fields['manufacturers_id'] ?? 0)) ? $manufacturer->fields['name'] : '';
         $mod = $model->getFromDB((int) ($computer->fields['computermodels_id'] ?? 0)) ? $model->fields['name'] : '';
-        $brand = PluginCheckwarrantyApi::detectBrand($serial, $config['auto_detect'] ? $mod : '', $mfg);
-        if (!$config['auto_detect'] && $mfg === '') {
+        $brand = PluginCheckwarrantyApi::detectBrand($config['auto_detect'] ? $serial : '', $config['auto_detect'] ? $mod : '', $mfg);
+        if (!$config['auto_detect'] && $brand === null) {
             self::save($id, ['state' => 'skipped', 'date_checked' => date('Y-m-d H:i:s')]);
             return 'skipped';
         }
