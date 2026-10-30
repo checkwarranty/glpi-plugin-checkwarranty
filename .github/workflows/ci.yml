@@ -43,6 +43,9 @@ jobs:
       - name: Release regression tests
         run: python3 -m unittest discover -s tests -v
 
+      - name: Public API result contract
+        run: php tests/result.php
+
       - name: Build installable archives
         run: bash tools/package.sh
 
@@ -81,3 +84,13 @@ jobs:
           generate_release_notes: true
           draft: true
           prerelease: true
+
+  style:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: php-cs-fixer
+      - run: php-cs-fixer fix --dry-run --diff

@@ -1,0 +1,23 @@
+name: GLPI 10 and 11 runtime acceptance
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  glpi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lifecycle, API, dates, escaping, permissions and cron
+        run: bash tests/acceptance/run.sh
+      - name: Container diagnostics
+        if: always()
+        run: docker compose -f tests/acceptance/compose.yml logs --no-color > acceptance.log 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: glpi-runtime-logs
+          path: acceptance.log

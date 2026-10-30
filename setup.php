@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CheckWarranty Plugin for GLPI
  *
@@ -14,9 +15,9 @@ if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access this file directly");
 }
 
-define('PLUGIN_CHECKWARRANTY_VERSION', '1.0.0');
+define('PLUGIN_CHECKWARRANTY_VERSION', '1.0.1');
 define('PLUGIN_CHECKWARRANTY_MIN_GLPI', '10.0.0');
-define('PLUGIN_CHECKWARRANTY_MAX_GLPI', '11.0.99');
+define('PLUGIN_CHECKWARRANTY_MAX_GLPI', '12.0.0');
 
 /**
  * Initialize the plugin: register classes, hooks, and tabs
@@ -25,15 +26,14 @@ define('PLUGIN_CHECKWARRANTY_MAX_GLPI', '11.0.99');
  *
  * @return void
  */
-function plugin_init_checkwarranty(): void {
+function plugin_init_checkwarranty(): void
+{
     global $PLUGIN_HOOKS;
 
     $PLUGIN_HOOKS['csrf_compliant']['checkwarranty'] = true;
 
     // Load localization domain & register plugin classes
-    Plugin::registerClass('PluginCheckwarrantyConfig', [
-        'addtabon' => 'Config',
-    ]);
+    Plugin::registerClass('PluginCheckwarrantyConfig');
 
     Plugin::registerClass('PluginCheckwarrantyComputer', [
         'addtabon' => 'Computer',
@@ -44,8 +44,7 @@ function plugin_init_checkwarranty(): void {
         $PLUGIN_HOOKS['config_page']['checkwarranty'] = 'front/config.form.php';
     }
 
-    // Register Automatic Actions (Cron)
-    $PLUGIN_HOOKS['cron_task']['checkwarranty'] = 'PluginCheckwarrantyCron';
+    $PLUGIN_HOOKS['item_purge']['checkwarranty'] = ['Computer' => ['PluginCheckwarrantySync', 'purge']];
 }
 
 /**
@@ -55,7 +54,8 @@ function plugin_init_checkwarranty(): void {
  *
  * @return array
  */
-function plugin_version_checkwarranty(): array {
+function plugin_version_checkwarranty(): array
+{
     return [
         'name'           => 'CheckWarranty',
         'version'        => PLUGIN_CHECKWARRANTY_VERSION,
@@ -82,7 +82,8 @@ function plugin_version_checkwarranty(): array {
  *
  * @return bool
  */
-function plugin_check_prerequisites_checkwarranty(): bool {
+function plugin_checkwarranty_check_prerequisites(): bool
+{
     // Check PHP version
     if (version_compare(PHP_VERSION, '8.0.0', '<')) {
         echo sprintf(__('PHP >= %s required', 'checkwarranty'), '8.0.0');
@@ -111,6 +112,7 @@ function plugin_check_prerequisites_checkwarranty(): bool {
  *
  * @return bool
  */
-function plugin_check_checkwarranty(): bool {
-    return plugin_check_prerequisites_checkwarranty();
+function plugin_checkwarranty_check_config($verbose = false): bool
+{
+    return plugin_checkwarranty_check_prerequisites();
 }

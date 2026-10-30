@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CheckWarranty Configuration Form Controller for GLPI
  *
@@ -15,7 +16,6 @@ Session::checkRight('config', UPDATE);
 $config = new PluginCheckwarrantyConfig();
 
 if (isset($_POST['update'])) {
-    Session::checkCSRF($_POST);
     if (PluginCheckwarrantyConfig::saveConfig($_POST)) {
         Session::addMessageAfterRedirect(__('CheckWarranty settings saved successfully.', 'checkwarranty'), true, INFO);
     } else {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CheckWarranty API Client for GLPI
  *
@@ -12,8 +13,8 @@ if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access this file directly");
 }
 
-class PluginCheckwarrantyApi {
-
+class PluginCheckwarrantyApi
+{
     /**
      * Infer brand from manufacturer name, model name, or serial number
      *
@@ -24,7 +25,8 @@ class PluginCheckwarrantyApi {
      * @param string $mfgName
      * @return string|null
      */
-    public static function detectBrand(string $serial, string $modelName = '', string $mfgName = ''): ?string {
+    public static function detectBrand(string $serial, string $modelName = '', string $mfgName = ''): ?string
+    {
         $mfg = strtolower(trim($mfgName));
         $mod = strtolower(trim($modelName));
         $s   = strtoupper(trim($serial));
@@ -74,117 +76,61 @@ class PluginCheckwarrantyApi {
         return null;
     }
 
-    /**
-     * Query CheckWarranty REST API for device warranty and hardware specifications
-     *
-     * @since 1.0.0
-     *
-     * @param string      $apiKey
-     * @param string      $apiUrl
-     * @param string      $serial
-     * @param string|null $brand
-     * @return array|null
-     */
-    public static function lookupDevice(string $apiKey, string $apiUrl, string $serial, ?string $brand = null): ?array {
-        $baseUrl = rtrim(trim($apiUrl), '/');
-        $endpoint = $brand ? "$baseUrl/devices/lookup" : "$baseUrl/devices/auto-detect";
-
-        $payload = ['serialNumber' => $serial];
-        if ($brand) {
-            $payload['brand'] = $brand;
+    public static function validUrl(string $url): bool
+    {
+        $parts = parse_url($url);
+        if (!$parts || empty($parts['host']) || isset($parts['user']) || isset($parts['pass']) || isset($parts['query']) || isset($parts['fragment'])) {
+            return false;
         }
-
-        $idempotencyKey = sprintf(
-            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0x0fff) | 0x4000,
-            mt_rand(0, 0x3fff) | 0x8000,
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
-        );
-
-        $headers = [
-            'Content-Type: application/json',
-            'Accept: application/json',
-            'X-API-Key: ' . trim($apiKey),
-            "Idempotency-Key: $idempotencyKey",
-            'User-Agent: CheckWarranty-GLPI-Plugin/' . PLUGIN_CHECKWARRANTY_VERSION,
-        ];
-
-        $ch = curl_init($endpoint);
-        curl_setopt_array($ch, [
-            CURLOPT_POST           => true,
-            CURLOPT_POSTFIELDS     => json_encode($payload),
-            CURLOPT_HTTPHEADER     => $headers,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT        => 30,
-            CURLOPT_SSL_VERIFYPEER => true,
-        ]);
-
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if ($httpCode === 404 || !$response) {
-            return null;
-        }
-
-        $res = json_decode($response, true);
-        if (!$res) {
-            return null;
-        }
-
-        // If scan is queued asynchronously, poll batch endpoint
-        if (in_array($res['status'] ?? '', ['in_progress', 'pending']) && !empty($res['batchId'])) {
-            return self::pollBatch($apiKey, $baseUrl, $res['batchId']);
-        }
-
-        return $res;
+        return ($parts['scheme'] ?? '') === 'https'
+            || (defined('PLUGIN_CHECKWARRANTY_TESTING') && PLUGIN_CHECKWARRANTY_TESTING && ($parts['scheme'] ?? '') === 'http');
     }
 
-    /**
-     * Poll batch scan endpoint
-     *
-     * @since 1.0.0
-     *
-     * @param string $apiKey
-     * @param string $baseUrl
-     * @param string $batchId
-     * @param int    $retries
-     * @return array|null
-     */
-    private static function pollBatch(string $apiKey, string $baseUrl, string $batchId, int $retries = 5): ?array {
-        $url = "$baseUrl/devices/scans/$batchId";
-        $headers = [
-            'Accept: application/json',
-            'X-API-Key: ' . trim($apiKey),
-            'User-Agent: CheckWarranty-GLPI-Plugin/' . PLUGIN_CHECKWARRANTY_VERSION,
-        ];
-
-        for ($i = 0; $i < $retries; $i++) {
-            sleep(4);
-            $ch = curl_init($url);
-            curl_setopt_array($ch, [
-                CURLOPT_HTTPHEADER     => $headers,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_TIMEOUT        => 20,
-            ]);
-            $response = curl_exec($ch);
-            curl_close($ch);
-
-            if (!$response) {
-                continue;
-            }
-
-            $res = json_decode($response, true);
-            if (($res['status'] ?? '') === 'completed') {
-                return !empty($res['items'][0]) ? $res['items'][0] : $res;
-            }
-            if (in_array($res['status'] ?? '', ['failed', 'error', 'not_found'])) {
-                return $res;
-            }
+    public static function lookupDevice(string $apiKey, string $apiUrl, string $serial, ?string $brand = null, ?string $requestKey = null, ?string $batchId = null): array
+    {
+        if (!self::validUrl($apiUrl)) {
+            return ['status' => 'error'];
         }
-
-        return null;
+        $base = rtrim($apiUrl, '/');
+        $headers = ['Accept: application/json', 'Content-Type: application/json', 'X-API-Key: ' . trim($apiKey), 'User-Agent: CheckWarranty-GLPI/' . PLUGIN_CHECKWARRANTY_VERSION];
+        $options = [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CONNECTTIMEOUT => 3,
+            CURLOPT_TIMEOUT => 8,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+            CURLOPT_FOLLOWLOCATION => false,
+        ];
+        if ($batchId !== null) {
+            if (!preg_match('/^[a-z0-9-]{1,100}$/i', $batchId)) {
+                return ['status' => 'error'];
+            }
+            $endpoint = $base . '/devices/scans/' . rawurlencode($batchId);
+        } else {
+            $endpoint = $base . ($brand ? '/devices/lookup' : '/devices/auto-detect');
+            $payload = ['serialNumber' => $serial];
+            if ($brand) {
+                $payload['brand'] = $brand;
+            }
+            $headers[] = 'Idempotency-Key: ' . ($requestKey ?? bin2hex(random_bytes(16)));
+            $options[CURLOPT_POST] = true;
+            $options[CURLOPT_POSTFIELDS] = json_encode($payload);
+        }
+        $options[CURLOPT_HTTPHEADER] = $headers;
+        $curl = curl_init($endpoint);
+        curl_setopt_array($curl, $options);
+        $body = curl_exec($curl);
+        $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        if (!is_string($body) || $code < 200 || $code >= 300) {
+            return ['status' => 'error'];
+        }
+        $response = json_decode($body, true);
+        if (!is_array($response)) {
+            return ['status' => 'error'];
+        }
+        if ($batchId !== null && in_array($response['status'] ?? '', ['completed', 'partial', 'failed'], true)) {
+            return isset($response['items'][0]) && is_array($response['items'][0]) ? $response['items'][0] : ['status' => 'error'];
+        }
+        return $response;
     }
 }

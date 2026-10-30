@@ -19,7 +19,7 @@ STAGING_DIR="$(mktemp -d)"
 trap 'rm -rf "$STAGING_DIR"' EXIT
 mkdir "$STAGING_DIR/checkwarranty"
 # Explicit runtime allowlist prevents credentials, VCS data and dev tools leaking.
-for entry in setup.php hook.php inc front locales LICENSE README.md CHANGELOG.md RELEASE.md; do
+for entry in setup.php hook.php inc front locales templates LICENSE README.md CHANGELOG.md RELEASE.md; do
     cp -R "$PLUGIN_DIR/$entry" "$STAGING_DIR/checkwarranty/"
 done
 find "$STAGING_DIR" -name '.*' -type f -delete

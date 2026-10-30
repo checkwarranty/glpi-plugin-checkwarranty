@@ -1,179 +1,51 @@
 <?php
-/**
- * CheckWarranty Background Scheduled Task (Cron) for GLPI
- *
- * @package   PluginCheckwarranty
- * @author    CheckWarranty Team <support@checkwarranty.info>
- * @license   GPLv3+ https://www.gnu.org/licenses/gpl-3.0.html
- * @since     1.0.0
- */
 
 if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access this file directly");
 }
 
-class PluginCheckwarrantyCron extends CommonDBTM {
+class PluginCheckwarrantyCron extends CommonDBTM
+{
+    public static function cronInfo($name): array
+    {
+        return ['description' => __('CheckWarranty automatic synchronization', 'checkwarranty')];
+    }
 
-    /**
-     * Automatic Action entrypoint: synchronizes warranty status for computers
-     *
-     * @since 1.0.0
-     *
-     * @param CronTask $task
-     * @return int 0 on failure/idle, 1 on success
-     */
-    public static function cronCheckwarranty_sync(CronTask $task): int {
+    public static function cronCheckwarranty_sync(CronTask $task): int
+    {
         global $DB;
-
         $config = PluginCheckwarrantyConfig::getConfig();
-        $apiKey = trim($config['api_key'] ?? '');
-        $apiUrl = trim($config['api_url'] ?? 'https://checkwarranty.info/api/v1');
-        $recheckDays = max(0, (int)($config['recheck_days'] ?? 30));
-        $syncSpecs = (bool)($config['sync_specs'] ?? true);
-
-        if (empty($apiKey)) {
-            $task->log('CheckWarranty API key is not configured. Task aborted.');
+        if (empty($config['api_key'])) {
             return 0;
         }
-
-        // Query computers with non-empty serial numbers
-        $iterator = $DB->request([
-            'SELECT'    => [
-                'glpi_computers.id',
-                'glpi_computers.name',
-                'glpi_computers.serial',
-                'glpi_manufacturers.name AS mfg_name',
-                'glpi_computermodels.name AS model_name',
-                'glpi_infocoms.id AS infocom_id',
-                'glpi_infocoms.warranty_date',
-            ],
-            'FROM'      => 'glpi_computers',
-            'LEFT JOIN' => [
-                'glpi_manufacturers' => [
-                    'FKEY' => [
-                        'glpi_computers'     => 'manufacturers_id',
-                        'glpi_manufacturers' => 'id',
-                    ],
-                ],
-                'glpi_computermodels' => [
-                    'FKEY' => [
-                        'glpi_computers'      => 'computermodels_id',
-                        'glpi_computermodels' => 'id',
-                    ],
-                ],
-                'glpi_infocoms' => [
-                    'ON' => [
-                        'glpi_infocoms'  => 'items_id',
-                        'glpi_computers' => 'id',
-                        ['AND' => ['glpi_infocoms.itemtype' => 'Computer']],
-                    ],
-                ],
-            ],
-            'WHERE'     => [
-                'glpi_computers.is_deleted' => 0,
-                'NOT' => ['glpi_computers.serial' => ['', null]],
-            ],
-            'LIMIT'     => 50, // Batch limit per cron run
+        $rows = $DB->request([
+            'FROM' => 'glpi_computers',
+            'WHERE' => ['is_deleted' => 0, 'is_template' => 0, 'serial' => ['!=', ''], 'id' => ['>', (int) $config['sync_cursor']]],
+            'ORDER' => 'id ASC', 'LIMIT' => 50,
         ]);
-
-        $processed = 0;
         $updated = 0;
-        $now = time();
-
-        foreach ($iterator as $row) {
-            $computerId = (int)$row['id'];
-            $serial = trim($row['serial']);
-            $mfgName = $row['mfg_name'] ?? '';
-            $modelName = $row['model_name'] ?? '';
-            $existingWarrantyDate = $row['warranty_date'] ?? null;
-            $infocomId = (int)($row['infocom_id'] ?? 0);
-
-            // Smart recheck check
-            if (!empty($existingWarrantyDate)) {
-                $expTimestamp = strtotime($existingWarrantyDate);
-                $daysRemaining = ($expTimestamp - $now) / 86400;
-                if ($daysRemaining > $recheckDays) {
-                    continue; // Skip: warranty is active and valid beyond threshold
-                }
-            }
-
-            $brand = PluginCheckwarrantyApi::detectBrand($serial, $modelName, $mfgName);
-            $processed++;
-
-            $res = PluginCheckwarrantyApi::lookupDevice($apiKey, $apiUrl, $serial, $brand);
-            if (!$res || ($res['status'] ?? '') === 'not_found') {
+        $visited = 0;
+        $requests = 0;
+        $deadline = microtime(true) + 35;
+        foreach ($rows as $row) {
+            $computer = new Computer();
+            if (!$computer->getFromDB($row['id'])) {
                 continue;
             }
-
-            $warranty = $res['data']['warranty'] ?? [];
-            $specs = $res['data']['specs'] ?? [];
-
-            $endDateStr = !empty($warranty['endDate']) ? substr($warranty['endDate'], 0, 10) : null;
-            $startDateStr = !empty($warranty['startDate']) ? substr($warranty['startDate'], 0, 10) : null;
-            $coverageType = $warranty['coverageType'] ?? ($warranty['description'] ?? '');
-
-            if (!$endDateStr && !$startDateStr && empty($specs)) {
-                continue;
+            $status = PluginCheckwarrantySync::run($computer);
+            $visited++;
+            $updated += $status === 'completed' ? 1 : 0;
+            $requests += in_array($status, ['completed', 'pending', 'error', 'not_found'], true) ? 1 : 0;
+            $DB->update('glpi_plugin_checkwarranty_configs', ['sync_cursor' => (int) $row['id']], ['id' => 1]);
+            if ($requests >= 4 || microtime(true) >= $deadline) {
+                break;
             }
-
-            // Calculate duration in months
-            $durationMonths = null;
-            if ($startDateStr && $endDateStr) {
-                $d1 = strtotime($startDateStr);
-                $d2 = strtotime($endDateStr);
-                if ($d2 > $d1) {
-                    $durationMonths = max(1, (int)round(($d2 - $d1) / (30.4375 * 86400)));
-                } else {
-                    $durationMonths = 0;
-                }
-            }
-
-            // Build warranty notes
-            $infoParts = [];
-            if (!empty($coverageType)) {
-                $infoParts[] = substr($coverageType, 0, 80);
-            }
-            if ($syncSpecs && !empty($specs)) {
-                if (!empty($specs['cpu'])) {
-                    $infoParts[] = 'CPU: ' . $specs['cpu'];
-                }
-                if (!empty($specs['ram'])) {
-                    $infoParts[] = 'RAM: ' . $specs['ram'];
-                }
-                if (!empty($specs['storage'])) {
-                    $infoParts[] = 'Disk: ' . $specs['storage'];
-                }
-            }
-
-            $infocomData = [];
-            if ($endDateStr) {
-                $infocomData['warranty_date'] = $endDateStr;
-            }
-            if ($startDateStr) {
-                $infocomData['buy_date'] = $startDateStr;
-            }
-            if ($durationMonths !== null) {
-                $infocomData['warranty_duration'] = $durationMonths;
-            }
-            if (!empty($infoParts)) {
-                $infocomData['warranty_info'] = substr(implode(' | ', $infoParts), 0, 255);
-            }
-
-            $infocom = new Infocom();
-            if ($infocomId > 0) {
-                $infocomData['id'] = $infocomId;
-                $infocom->update($infocomData);
-            } else {
-                $infocomData['itemtype'] = 'Computer';
-                $infocomData['items_id'] = $computerId;
-                $infocom->add($infocomData);
-            }
-
-            $updated++;
         }
-
+        if ($visited === 0) {
+            $DB->update('glpi_plugin_checkwarranty_configs', ['sync_cursor' => 0], ['id' => 1]);
+        }
         $task->addVolume($updated);
-        $task->log(sprintf('CheckWarranty Cron: %d processed, %d updated.', $processed, $updated));
-        return 1;
+        $task->log(sprintf('CheckWarranty: %d visited, %d updated.', $visited, $updated));
+        return $visited > 0 ? 1 : 0;
     }
 }

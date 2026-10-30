@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CheckWarranty Plugin for GLPI - Lifecycle Hooks
  *
@@ -19,7 +20,8 @@ if (!defined('GLPI_ROOT')) {
  *
  * @return bool
  */
-function plugin_checkwarranty_install(): bool {
+function plugin_checkwarranty_install(): bool
+{
     global $DB;
 
     $migration = new Migration(PLUGIN_CHECKWARRANTY_VERSION);
@@ -28,16 +30,19 @@ function plugin_checkwarranty_install(): bool {
     $table = 'glpi_plugin_checkwarranty_configs';
     if (!$DB->tableExists($table)) {
         $query = "CREATE TABLE IF NOT EXISTS `$table` (
-            `id` int(11) NOT NULL AUTO_INCREMENT,
-            `api_key` varchar(255) DEFAULT NULL,
+            `id` int unsigned NOT NULL AUTO_INCREMENT,
+            `api_key` text DEFAULT NULL,
             `api_url` varchar(255) NOT NULL DEFAULT 'https://checkwarranty.info/api/v1',
             `recheck_days` int(11) NOT NULL DEFAULT 30,
             `sync_specs` tinyint(1) NOT NULL DEFAULT 1,
             `auto_detect` tinyint(1) NOT NULL DEFAULT 1,
             `date_mod` timestamp NULL DEFAULT NULL,
+            `sync_cursor` int unsigned NOT NULL DEFAULT 0,
             PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
-        $DB->queryOrDie($query, $DB->error());
+        if (!$DB->doQuery($query)) {
+            return false;
+        }
 
         // Insert initial default configuration row
         $DB->insert($table, [
@@ -51,21 +56,52 @@ function plugin_checkwarranty_install(): bool {
         ]);
     }
 
+    $migration->addField($table, 'sync_cursor', 'integer', ['value' => 0]);
+    $migration->changeField($table, 'api_key', 'api_key', 'text');
+    $results = 'glpi_plugin_checkwarranty_results';
+    if (!$DB->tableExists($results)) {
+        $charset = DBConnection::getDefaultCharset();
+        $collation = DBConnection::getDefaultCollation();
+        $query = "CREATE TABLE `$results` (
+            `id` int unsigned NOT NULL AUTO_INCREMENT,
+            `computers_id` int unsigned NOT NULL,
+            `serial` varchar(255) NOT NULL,
+            `request_key` varchar(64) NOT NULL,
+            `batch_id` varchar(100) NOT NULL DEFAULT '',
+            `state` varchar(30) NOT NULL,
+            `date_attempt` timestamp DEFAULT NULL,
+            `date_checked` timestamp DEFAULT NULL,
+            `payload` mediumtext DEFAULT NULL,
+            PRIMARY KEY (`id`), UNIQUE KEY `computers_id` (`computers_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=$charset COLLATE=$collation";
+        if (!$DB->doQuery($query)) {
+            return false;
+        }
+    }
+
     // 2. Register CronTask (Automatic Action)
     CronTask::Register(
         'PluginCheckwarrantyCron',
         'checkwarranty_sync',
-        DAY_TIMESTAMP, // Run daily
+        300, // Bounded batches; disabled until configured
         [
             'comment'   => 'CheckWarranty automatic hardware warranty and specs synchronizer',
-            'mode'      => CronTask::MODE_INTERNAL,
+            'mode'      => CronTask::MODE_EXTERNAL,
             'state'     => CronTask::STATE_DISABLE, // Disabled by default until API key is configured
-            'hourmin'   => 2,
-            'hourmax'   => 5,
         ]
     );
 
     $migration->executeMigration();
+    foreach ($DB->request(['FROM' => 'glpi_plugin_checkwarranty_configs']) as $row) {
+        $key = $row['api_key'] ?? '';
+        if ($key !== '' && !str_starts_with($key, 'enc:')) {
+            $encrypted = (new GLPIKey())->encrypt($key);
+            if ($encrypted === '') {
+                return false;
+            }
+            $DB->update('glpi_plugin_checkwarranty_configs', ['api_key' => 'enc:' . $encrypted], ['id' => $row['id']]);
+        }
+    }
     return true;
 }
 
@@ -76,17 +112,17 @@ function plugin_checkwarranty_install(): bool {
  *
  * @return bool
  */
-function plugin_checkwarranty_uninstall(): bool {
+function plugin_checkwarranty_uninstall(): bool
+{
     global $DB;
 
     // 1. Unregister Cron Task
-    CronTask::Unregister('PluginCheckwarrantyCron');
+    CronTask::unregister('checkwarranty');
 
-    // 2. Drop plugin configuration table
-    $table = 'glpi_plugin_checkwarranty_configs';
-    if ($DB->tableExists($table)) {
-        $DB->queryOrDie("DROP TABLE IF EXISTS `$table`;", $DB->error());
+    foreach (['glpi_plugin_checkwarranty_configs', 'glpi_plugin_checkwarranty_results'] as $table) {
+        if ($DB->tableExists($table) && !$DB->doQuery("DROP TABLE `$table`")) {
+            return false;
+        }
     }
-
     return true;
 }

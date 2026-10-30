@@ -1,0 +1,16 @@
+<form method="post" action="{{ action }}">
+  <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
+  <h2>{{ __('CheckWarranty Settings', 'checkwarranty') }}</h2>
+  <p>{{ __('Live lookups may consume API credits. Use a sandbox key for testing.', 'checkwarranty') }}</p>
+  <p><label for="cw-key">{{ __('CheckWarranty API Key', 'checkwarranty') }}</label>
+    <input type="password" id="cw-key" name="api_key" value="" autocomplete="new-password">
+    {{ configured ? __('Key configured; leave blank to keep it.', 'checkwarranty') : __('API key required.', 'checkwarranty') }}</p>
+  <p><label><input type="checkbox" name="clear_key" value="1">{{ __('Remove API key', 'checkwarranty') }}</label></p>
+  <p><label for="cw-url">{{ __('API URL', 'checkwarranty') }}</label>
+    <input id="cw-url" type="url" name="api_url" value="{{ config.api_url }}" required></p>
+  <p><label for="cw-days">{{ __('Smart Recheck Days', 'checkwarranty') }}</label>
+    <input id="cw-days" type="number" name="recheck_days" value="{{ config.recheck_days }}" min="1" max="365"></p>
+  <p><label><input type="checkbox" name="sync_specs" value="1" {{ config.sync_specs ? 'checked' : '' }}>{{ __('Sync Factory Specifications', 'checkwarranty') }}</label></p>
+  <p><label><input type="checkbox" name="auto_detect" value="1" {{ config.auto_detect ? 'checked' : '' }}>{{ __('Auto-Detect Brand', 'checkwarranty') }}</label></p>
+  <button class="btn btn-primary" name="update" value="1">{{ __('Save') }}</button>
+</form>
