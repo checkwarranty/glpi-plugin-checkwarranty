@@ -2,6 +2,7 @@
    <name>CheckWarranty</name>
    <key>checkwarranty</key>
    <state>stable</state>
+   <logo>https://checkwarranty.info/favicon-48x48.png</logo>
    <description>
       <short>
          <en>Automate hardware warranty tracking and factory hardware specification enrichment in GLPI using CheckWarranty B2B API.</en>
@@ -56,4 +57,8 @@
          <tag>комплектация</tag>
       </ru>
    </tags>
+   <screenshots>
+      <screenshot>https://raw.githubusercontent.com/checkwarranty/glpi-plugin-checkwarranty/main/images/settings.jpg</screenshot>
+      <screenshot>https://raw.githubusercontent.com/checkwarranty/glpi-plugin-checkwarranty/main/images/warranty.jpg</screenshot>
+   </screenshots>
 </root>

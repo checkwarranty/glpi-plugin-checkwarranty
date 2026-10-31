@@ -27,6 +27,12 @@ A CheckWarranty API key is required. Live lookups can consume paid credits, incl
 
 Back up the database before an upgrade. Deactivation preserves settings and scan history. Uninstall removes the plugin's configuration and request-state tables, but keeps warranty information already written to native GLPI financial records. Deleting a Computer removes its plugin request state.
 
+## Interface
+
+![Settings in GLPI 11](images/settings.jpg)
+
+![Warranty tab using an isolated mock response, including an escaped HTML test value](images/warranty.jpg)
+
 ## Development and verification
 
 Requirements: PHP 8.0+, curl/json extensions, Composer, Python 3, GNU gettext (`msgfmt`), tar, zip and shasum. The GLPI core may require a newer PHP version than the plugin itself.
