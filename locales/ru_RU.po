@@ -123,3 +123,5 @@ msgstr "Дата начала гарантии"
 msgid "cURL extension is required for CheckWarranty"
 msgstr "Для CheckWarranty нужно расширение cURL"
 
+msgid "Unsupported GLPI version."
+msgstr "Неподдерживаемая версия GLPI."

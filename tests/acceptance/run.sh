@@ -10,6 +10,7 @@ for major in 10 11; do
   docker compose exec -T "glpi${major}" php bin/console database:install --db-host="glpi${major}-db" --db-name=glpi --db-user=glpi --db-password=acceptance-only --no-telemetry --no-interaction
   docker compose exec -T "glpi${major}" php bin/console plugin:install checkwarranty --username=glpi --no-interaction
   docker compose exec -T "glpi${major}" php bin/console plugin:activate checkwarranty --no-interaction
+  docker compose exec -T mock python -c 'import urllib.request; urllib.request.urlopen("http://127.0.0.1:8000/_reset").read()'
   docker compose exec -T "glpi${major}" php /opt/cw-testing/runtime.php
   docker compose exec -T "glpi${major}" php bin/console plugin:deactivate checkwarranty --no-interaction
   docker compose exec -T "glpi${major}" php bin/console plugin:activate checkwarranty --no-interaction

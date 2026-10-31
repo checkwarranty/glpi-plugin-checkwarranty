@@ -16,7 +16,7 @@ if (!defined('GLPI_ROOT')) {
 }
 
 define('PLUGIN_CHECKWARRANTY_VERSION', '1.0.1');
-define('PLUGIN_CHECKWARRANTY_MIN_GLPI', '10.0.0');
+define('PLUGIN_CHECKWARRANTY_MIN_GLPI', '10.0.28');
 define('PLUGIN_CHECKWARRANTY_MAX_GLPI', '12.0.0');
 
 /**
@@ -69,7 +69,7 @@ function plugin_version_checkwarranty(): array
             ],
             'php'  => [
                 'min'  => '8.0.0',
-                'exts' => ['curl', 'json'],
+                'exts' => ['curl', 'json', 'mbstring'],
             ],
         ],
     ];
@@ -84,6 +84,12 @@ function plugin_version_checkwarranty(): array
  */
 function plugin_checkwarranty_check_prerequisites(): bool
 {
+    if (!((version_compare(GLPI_VERSION, '10.0.28', '>=') && version_compare(GLPI_VERSION, '11.0.0', '<'))
+        || (version_compare(GLPI_VERSION, '11.0.12', '>=') && version_compare(GLPI_VERSION, '12.0.0', '<')))) {
+        echo __('Unsupported GLPI version.', 'checkwarranty');
+        return false;
+    }
+
     // Check PHP version
     if (version_compare(PHP_VERSION, '8.0.0', '<')) {
         echo sprintf(__('PHP >= %s required', 'checkwarranty'), '8.0.0');

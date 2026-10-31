@@ -44,7 +44,10 @@ class Handler(BaseHTTPRequestHandler):
             self.send(fixture(serial))
 
     def do_GET(self):
-        if self.path == "/_stats":
+        if self.path == "/_reset":
+            REQUESTS.clear()
+            self.send({"reset": True})
+        elif self.path == "/_stats":
             self.send(REQUESTS)
         elif self.path.endswith("00000000-0000-4000-8000-000000000002"):
             self.send({"status":"failed","items":[{"status":"failed"}]})

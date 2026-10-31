@@ -1,54 +1,45 @@
 # CheckWarranty for GLPI
 
-Development version of a native GLPI plugin for hardware warranty lookup through
-[CheckWarranty](https://checkwarranty.info). Licensed under GPL-3.0-or-later.
+Native GLPI plugin for hardware warranty lookup through [CheckWarranty](https://checkwarranty.info), licensed under GPL-3.0-or-later.
 
-**Status: alpha, unreleased. Do not install on production GLPI.**
-The current code has known API, authorization and warranty mapping problems.
-Read [RELEASE.md](RELEASE.md) before testing. GLPI 10 and 11 are intended targets;
-compatibility has not been established by a running integration test.
-This plugin has not been approved or listed by Teclib'.
+Version **1.0.1** supports GLPI **10.0.28–10.x** and **11.0.12–11.x**. Runtime acceptance uses GLPI 10.0.28 and 11.0.12. Catalog submission and moderator approval are separate from a GitHub release; this project does not claim official GLPI approval.
 
-## Intended features
+## Features
 
-- Warranty tab on Computer records with a manual refresh action.
-- Synchronization with native financial/warranty records (Infocom).
-- Optional specification notes and an automatic synchronization action.
-- English, French and Russian localization (translation coverage is incomplete).
+- Computer warranty tab with manual refresh and factory specification notes.
+- Native financial data synchronization without inventing purchase dates.
+- End dates retained in warranty information; native start/months written only for confirmed exact calendar intervals.
+- Useful partial results preserve previously known warranty details.
+- Encrypted API key, per-object/entity permissions, CSRF protection and escaped output.
+- Bounded automatic synchronization with a persistent cursor and resumable asynchronous requests.
+- English, French and Russian interface.
 
-A CheckWarranty API key is required. Live lookups can consume paid API credits;
-use a sandbox key and test serials for acceptance tests. An empty serial echo,
-provider error or not-found result does not represent useful device data.
+A CheckWarranty API key is required. Live lookups can consume paid credits, including useful partial results. Use a sandbox key for testing. Provider errors, empty serial echoes and not-found responses are not useful device results. The plugin caches recent results and resumes pending requests to avoid duplicate work; intentional later refreshes can be billable.
 
-## Development
+## Installation
 
-Requirements: PHP 8.0+, curl/json extensions, Composer, Python 3,
-GNU gettext (`msgfmt`), tar, zip and shasum.
+1. Download `glpi-checkwarranty-1.0.1.tar.gz` or `.zip` from [Releases](https://github.com/checkwarranty/glpi-plugin-checkwarranty/releases).
+2. Check the SHA-256 checksum supplied with the release and extract the single `checkwarranty/` directory into GLPI's `plugins/` directory.
+3. Install and activate CheckWarranty in **Setup > Plugins**.
+4. Open its configuration, enter your API key and keep the default HTTPS API endpoint unless using an isolated test service. An empty key field preserves an existing key; the clear checkbox removes it.
+5. Open a Computer with a serial number and use its CheckWarranty tab. Computer update and financial information update rights are required for synchronization; financial read rights are required to view the data.
+6. If scheduled synchronization is wanted, configure GLPI's external automatic-action runner and enable the CheckWarranty action. It starts disabled and processes at most four API calls within a 35-second budget per run.
+
+Back up the database before an upgrade. Deactivation preserves settings and scan history. Uninstall removes the plugin's configuration and request-state tables, but keeps warranty information already written to native GLPI financial records. Deleting a Computer removes its plugin request state.
+
+## Development and verification
+
+Requirements: PHP 8.0+, curl/json extensions, Composer, Python 3, GNU gettext (`msgfmt`), tar, zip and shasum. The GLPI core may require a newer PHP version than the plugin itself.
 
 ```bash
 composer validate --strict
 composer lint
 composer test
-bash tools/package.sh
+php-cs-fixer fix --dry-run --diff
+bash tools/package.sh v1.0.1
+bash tests/acceptance/run.sh
 ```
 
-The builder compiles translations in a temporary staging directory, lints PHP,
-and produces `dist/glpi-checkwarranty-1.0.0.tar.gz`, `.zip` and `.sha256`.
-Both archives contain exactly one top-level `checkwarranty/` directory and the
-same runtime files. Development tools, repository metadata and credentials are
-excluded. A mismatched version argument fails the build:
-`bash tools/package.sh v1.0.0`.
+The last command launches isolated GLPI 10/11 databases and a fake B2B server with Docker; it performs no paid scans. It verifies lifecycle operations, actual database writes, async/partial/error responses, authorization, encryption, CSRF, output escaping and progress beyond 50 assets.
 
-For isolated testing, extract the archive under GLPI's `plugins/` directory,
-then install and activate it from Setup > Plugins. Configure a sandbox key under
-Setup > Plugins > CheckWarranty. Keep the automatic action disabled until the
-release acceptance checklist passes. Back up the database before install testing.
-
-## Publication
-
-The source repository is intended to be
-[checkwarranty/glpi-plugin-checkwarranty](https://github.com/checkwarranty/glpi-plugin-checkwarranty).
-The standalone repository must contain this directory's contents at its root,
-including `.github/`, `tools/` and `tests/`; do not upload the parent monorepo.
-Tagged builds create a **draft prerelease**, requiring runtime acceptance before
-public release. See [RELEASE.md](RELEASE.md) for the submission procedure.
+Archives contain one top-level `checkwarranty/` directory with runtime files and translations. Credentials, tests and development tools are excluded. See [RELEASE.md](RELEASE.md) for release evidence and publication details.
